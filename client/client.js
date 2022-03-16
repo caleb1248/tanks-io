@@ -17,7 +17,7 @@ let keys = {
  * @param {MouseEvent} e
   */
 function handleMouseMove(e) {
-  socket.emit('mousemove', e)
+  socket.emit('mousemove', e.x, e.y)
 }
 
 function handleClick() {
@@ -26,15 +26,19 @@ function handleClick() {
 
 window.addEventListener('mousemove', handleMouseMove);
 window.addEventListener('click', handleClick);
+
 onkeydown = onkeyup = function (e) {
   keys[e.key] = e.type == "keydown";
+
   var { ArrowRight, ArrowLeft, ArrowDown, ArrowUp } = keys;
-  var newKeys = { ArrowRight: ArrowRight, ArrowLeft: ArrowLeft, ArrowDown: ArrowDown, ArrowUp: ArrowUp }
+  var newKeys = { ArrowRight: ArrowRight, ArrowLeft: ArrowLeft, ArrowDown: ArrowDown, ArrowUp: ArrowUp };
+
   if (newKeys != keys) {
     keys = newKeys;
     socket.emit('keychange', keys);
   };
 }
+
 socket.on('frame', frameData => {
   ctx.clearRect(0 ,0, canvas.width, canvas.height);
 
@@ -42,7 +46,15 @@ socket.on('frame', frameData => {
     ctx.fillStyle = "black";
     ctx.save();
     ctx.translate(data.x, data.y);
+    ctx.rotate(data.angle);
     ctx.fillRect(-6, -6, 12, 12);
     ctx.restore();
+    /*for(let bullet of frameData.bullets) {
+      ctx.save();
+      ctx.translate(bullet.x, bullet.y);
+      ctx.rotate(bullet.angle);
+      ctx.fillRect(-3, -3, 6, 6);
+      ctx.restore();
+    }*/
   }
 })

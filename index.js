@@ -23,17 +23,17 @@ io.on('connection', socket => {
     socket.on('shoot', player.shoot.bind(player));
     socket.on('keychange', player.handleKeyEvent.bind(player));
     socket.on('disconnect', () => {
-
+      users.splice(users.indexOf(player), 1);
     })
   });
 });
 
 setInterval(() => {
-  var sendData = [];
+  const sendData = [];
 
   for(var user of users){
     user.update();
-    sendData.push(user.position);
+    sendData.push(user.getJSON());
   }
 
   io.emit('frame', sendData);
