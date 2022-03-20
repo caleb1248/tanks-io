@@ -1,32 +1,22 @@
 import { Bullet } from './bullet.js'
-
+import Keys from './keys';
 export class Player {
-  /**
-   * Creates a new instance of Player
-   */
   constructor() {
-    this.position = { x: 0, y: 0 }
-    this.angle = Math.PI * 3 / 8;
-    this.speed = 2.3;
-    this.keys = {
-      'ArrowRight': false,
-      'ArrowUp': false,
-      'ArrowDown': false,
-      'ArrowLeft': false
-    };
-
-    /**
-     * @type {Bullet[]}
-     */
-    this.bullets = [];
   }
 
-  /**
-   * Handles the mousemove event
-   * @param {number} ex 
-   * @param {number} ey 
-   */
-  handleMouseMove(ex, ey) {
+  
+  public position = { x: 0, y: 0 };
+  public angle: number = Math.PI * 3 / 8;
+  public bullets: Bullet[] = [];
+  public speed: number = 2.3;
+  public keys: Keys = {
+    'ArrowRight': false,
+    'ArrowUp': false,
+    'ArrowDown': false,
+    'ArrowLeft': false
+  };
+
+  handleMouseMove(ex: number, ey: number) {
     const { x, y } = this.position;
     const dy = ey - y,
       dx = ex - x;
@@ -34,7 +24,7 @@ export class Player {
     this.angle = Math.atan2(dy, dx);
   }
 
-  handleKeyEvent(newKeys) {
+  handleKeyEvent(newKeys: Keys) {
     this.keys = newKeys;
   }
 
@@ -53,7 +43,7 @@ export class Player {
     }
   }
 
-  shoot() {
+  public shoot(): void {
     this.bullets.push(new Bullet(this.position, this.angle));
   }
 

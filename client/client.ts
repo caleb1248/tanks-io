@@ -1,9 +1,11 @@
+import io from'socket.io-client';
+
 const canvas = document.querySelector('canvas');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 const ctx = canvas.getContext('2d');
 
-const socket = io();
+const socket = io('http://localhost:3000');
 socket.emit('joining');
 
 let keys = {
@@ -13,11 +15,9 @@ let keys = {
   'ArrowLeft': false
 };
 
-/**
- * @param {MouseEvent} e
-  */
-function handleMouseMove(e) {
-  socket.emit('mousemove', e.x, e.y)
+
+function handleMouseMove(e: MouseEvent) {
+  socket.emit('mousemove', e.x, e.y);
 }
 
 function handleClick() {

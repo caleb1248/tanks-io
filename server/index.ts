@@ -1,17 +1,14 @@
-import express from 'express';
 import { Server } from 'socket.io';
 import { Player } from './lib/player.js';
-const app = express();
-const server = app.listen(3000, () => console.log('Go to http://localhost:3000'));
 
-/**
- * @type {Player[]}
- */
-let users = [];
+let users: Player[] = [];
 
-const io = new Server(server);
-
-app.use(express.static('client'));
+const io = new Server(3000, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+});
 
 io.on('connection', socket => {
   console.log('connection');
