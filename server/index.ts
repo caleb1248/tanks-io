@@ -3,7 +3,7 @@ import { Player } from './lib/player.js';
 
 let users: Player[] = [];
 
-const io = new Server(3000, {
+const io = new Server(4000, {
   cors: {
     origin: '*',
     methods: ['GET', 'POST']

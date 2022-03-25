@@ -1,11 +1,11 @@
-import io from'socket.io-client';
+import io from 'socket.io-client';
 
 const canvas = document.querySelector('canvas');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 const ctx = canvas.getContext('2d');
 
-const socket = io('http://localhost:3000');
+const socket = io('http://localhost:4000');
 socket.emit('joining');
 
 let keys = {
@@ -25,9 +25,9 @@ function handleClick() {
 }
 
 window.addEventListener('mousemove', handleMouseMove);
-window.addEventListener('click', handleClick);
+window.addEventListener('mousedown', handleClick);
 
-onkeydown = onkeyup = function (e) {
+onkeydown = onkeyup = function (e: KeyboardEvent) {
   keys[e.key] = e.type == "keydown";
 
   var { ArrowRight, ArrowLeft, ArrowDown, ArrowUp } = keys;
@@ -42,19 +42,22 @@ onkeydown = onkeyup = function (e) {
 socket.on('frame', frameData => {
   ctx.clearRect(0 ,0, canvas.width, canvas.height);
 
-  for(let data of frameData){
+  for(let data of frameData) {
+    // Render the player
     ctx.fillStyle = "black";
     ctx.save();
     ctx.translate(data.x, data.y);
     ctx.rotate(data.angle);
     ctx.fillRect(-6, -6, 12, 12);
     ctx.restore();
-    /*for(let bullet of frameData.bullets) {
+
+    // Render the bullets
+    for(let bullet of data.bullets) {
       ctx.save();
-      ctx.translate(bullet.x, bullet.y);
+      ctx.translate(bullet.pos.x, bullet.pos.y);
       ctx.rotate(bullet.angle);
       ctx.fillRect(-3, -3, 6, 6);
       ctx.restore();
-    }*/
+    }
   }
 })
