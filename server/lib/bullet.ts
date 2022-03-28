@@ -1,10 +1,11 @@
+import BulletJSON from '../../lib/bullet';
+
 export class Bullet {
   constructor(initialPosition: { x: number, y: number }, direction: number) {
     const { x, y } = initialPosition;
     this.pos = { x: x, y: y };
-    this.speed = 8;
+    this.speed = 10;
     this.direction = direction;
-    console.log('shooting bullet', this.pos, this.direction, 'degrees')
   }
 
   public pos: { x: number, y: number };
@@ -16,7 +17,7 @@ export class Bullet {
     this.pos.y += this.speed * Math.sin(this.direction);
   }
 
-  toJSON() {
-    return {direction: this.direction, pos: this.pos};
+  toJSON(): BulletJSON {
+    return {angle: this.direction, pos: this.pos};
   }
 }

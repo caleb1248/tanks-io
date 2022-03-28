@@ -1,5 +1,10 @@
 import { Server } from 'socket.io';
 import { Player } from './lib/player.js';
+import  PlayerData from '../lib/playerJSON.js'
+import { Bullet } from './lib/bullet.js';
+import BulletData from '../lib/bullet.js';
+//@ts-ignore
+const bullets: Bullet[] = []; 
 
 let users: Player[] = [];
 
@@ -17,7 +22,10 @@ io.on('connection', socket => {
     users.push(player);
 
     socket.on('mousemove', player.handleMouseMove.bind(player));
-    socket.on('shoot', player.shoot.bind(player));
+    socket.on('shoot', () => {
+      player.shoot(bullets);
+      console.log(bullets.length);
+    });
     socket.on('keychange', player.handleKeyEvent.bind(player));
     socket.on('disconnect', () => {
       users.splice(users.indexOf(player), 1);
@@ -26,12 +34,18 @@ io.on('connection', socket => {
 });
 
 setInterval(() => {
-  const sendData = [];
+  const sendData: PlayerData[] = [];
+  const bulletss: BulletData[] = []
+  bullets.forEach(bullet => {
+    bullet.update();
+    bulletss.push(bullet.toJSON());
+  });
 
-  for(var user of users){
+  users.forEach(user => {
     user.update();
+    user.detectCollision(bullets);
     sendData.push(user.getJSON());
-  }
+  })
 
-  io.emit('frame', sendData);
+  io.emit('frame', sendData, bulletss);
 }, 1000/60)

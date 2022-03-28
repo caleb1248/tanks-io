@@ -1,13 +1,10 @@
-import { Bullet } from './bullet.js'
+import { Bullet } from './bullet.js';
 import Keys from './keys';
-export class Player {
-	constructor() {
-	}
+import PlayerData from '../../lib/playerJSON';
 
-	
+export class Player {
 	public position = { x: 0, y: 0 };
 	public angle: number = Math.PI * 3 / 8;
-	public bullets: Bullet[] = [];
 	public speed: number = 2.3;
 	public keys: Keys = {
 		'ArrowRight': false,
@@ -36,23 +33,30 @@ export class Player {
 		if (ArrowRight) this.position.x += this.speed;
 		if (ArrowDown) this.position.y += this.speed;
 		if (ArrowLeft) this.position.x -= this.speed;
-		
-		// Update bullets
-		for(let bullet of this.bullets) {
-			bullet.update();
-		}
 	}
 
-	public shoot(): void {
-		this.bullets.push(new Bullet(this.position, this.angle));
-		console.log(this.angle);
+	public shoot(bulletArray: Bullet[]): void {
+    var bullet = new Bullet(this.position, this.angle);
+    bullet.update();
+		bulletArray.push(bullet);
 	}
 
-	getJSON() {
-		const b = [];
+  detectCollision(bullets: Bullet[]) {
+    bullets.forEach(bullet => {
+      const { x, y } = this.position;
+      const { x: bx, y: by } = bullet.pos;
+      const dx = x - bx,
+        dy = y - by;
 
-		for(let bullet of this.bullets) b.push(bullet.toJSON());
-		
-		return { ...this.position, angle: this.angle, bullets: b };
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if(distance < 10) {
+        console.log('death');
+      }
+    });
+	}
+
+	getJSON(): PlayerData {
+		return { ...this.position, angle: this.angle};
 	}
 }

@@ -1,4 +1,6 @@
 import io from 'socket.io-client';
+import PlayerData from '../lib/playerJSON';
+import Bullet from '../lib/bullet';
 
 const canvas = document.querySelector('canvas');
 canvas.width = window.innerWidth;
@@ -14,7 +16,6 @@ let keys = {
   'ArrowDown': false,
   'ArrowLeft': false
 };
-
 
 function handleMouseMove(e: MouseEvent) {
   socket.emit('mousemove', e.x, e.y);
@@ -39,7 +40,7 @@ onkeydown = onkeyup = function (e: KeyboardEvent) {
   };
 }
 
-socket.on('frame', frameData => {
+socket.on('frame', (frameData: PlayerData[], bullets: Bullet[]) => {
   ctx.clearRect(0 ,0, canvas.width, canvas.height);
 
   for(let data of frameData) {
@@ -52,7 +53,7 @@ socket.on('frame', frameData => {
     ctx.restore();
 
     // Render the bullets
-    for(let bullet of data.bullets) {
+    for(let bullet of bullets) {
       ctx.save();
       ctx.translate(bullet.pos.x, bullet.pos.y);
       ctx.rotate(bullet.angle);
