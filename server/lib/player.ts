@@ -1,11 +1,16 @@
 import { Bullet } from './bullet.js';
 import Keys from './keys';
 import PlayerData from '../../lib/playerJSON';
-
+import { Socket } from 'socket.io';
 export class Player {
+  constructor(socket: Socket) {
+    this.socket = socket;
+  }
+
 	public position = { x: 0, y: 0 };
 	public angle: number = Math.PI * 3 / 8;
 	public speed: number = 2.3;
+  public socket: Socket;
 	public keys: Keys = {
 		'ArrowRight': false,
 		'ArrowUp': false,
