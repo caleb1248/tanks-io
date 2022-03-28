@@ -18,7 +18,7 @@ const io = new Server(4000, {
 io.on('connection', socket => {
   console.log('connection');
   socket.on('joining', () => {
-    const player = new Player();
+    const player = new Player(socket);
     users.push(player);
 
     socket.on('mousemove', player.handleMouseMove.bind(player));

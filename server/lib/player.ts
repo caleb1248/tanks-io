@@ -56,7 +56,7 @@ export class Player {
       const distance = Math.sqrt(dx * dx + dy * dy);
 
       if(distance < 10) {
-        console.log('death');
+        this.socket.emit('dead');
       }
     });
 	}

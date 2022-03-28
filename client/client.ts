@@ -40,6 +40,8 @@ onkeydown = onkeyup = function (e: KeyboardEvent) {
   };
 }
 
+socket.on('dead', () => alert('u died'))
+
 socket.on('frame', (frameData: PlayerData[], bullets: Bullet[]) => {
   ctx.clearRect(0 ,0, canvas.width, canvas.height);
 
