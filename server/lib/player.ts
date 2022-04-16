@@ -2,6 +2,7 @@ import { Bullet } from './bullet.js';
 import Keys from './keys';
 import PlayerData from '../../lib/playerJSON';
 import { Socket } from 'socket.io';
+
 export class Player {
   constructor(socket: Socket) {
     this.socket = socket;
@@ -22,7 +23,6 @@ export class Player {
 		const { x, y } = this.position;
 		const dy = ey - y,
 			dx = ex - x;
-
 		this.angle = Math.atan2(dy, dx);
 	}
 
@@ -38,15 +38,21 @@ export class Player {
 		if (ArrowRight) this.position.x += this.speed;
 		if (ArrowDown) this.position.y += this.speed;
 		if (ArrowLeft) this.position.x -= this.speed;
+		if(this.position.x < -2) this.position.x = 0;
+		if(this.position.y < -2) this.position.y = 0;
+		if(this.position.x > 700) this.position.x = 700;
+		if(this.position.y > 700) this.position.y = 700;
 	}
 
 	public shoot(bulletArray: Bullet[]): void {
     var bullet = new Bullet(this.position, this.angle);
     bullet.update();
+		bullet.update();
 		bulletArray.push(bullet);
 	}
 
-  detectCollision(bullets: Bullet[]) {
+  detectCollision(bullets: Bullet[]): boolean {
+		let collided = false;
     bullets.forEach(bullet => {
       const { x, y } = this.position;
       const { x: bx, y: by } = bullet.pos;
@@ -54,11 +60,9 @@ export class Player {
         dy = y - by;
 
       const distance = Math.sqrt(dx * dx + dy * dy);
-
-      if(distance < 10) {
-        this.socket.emit('dead');
-      }
+			collided = distance < 10;
     });
+		return collided;
 	}
 
 	getJSON(): PlayerData {

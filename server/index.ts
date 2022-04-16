@@ -1,12 +1,8 @@
-import { Server } from 'socket.io';
+import Room from './lib/room.js';
+import { Server, Socket } from 'socket.io';
 import { Player } from './lib/player.js';
-import  PlayerData from '../lib/playerJSON.js'
-import { Bullet } from './lib/bullet.js';
-import BulletData from '../lib/bullet.js';
-//@ts-ignore
-const bullets: Bullet[] = []; 
 
-let users: Player[] = [];
+const rooms: Room[] = [];
 
 const io = new Server(4000, {
   cors: {
@@ -15,37 +11,29 @@ const io = new Server(4000, {
   }
 });
 
-io.on('connection', socket => {
-  console.log('connection');
+io.on('connection', (socket: Socket) => {
   socket.on('joining', () => {
+    // initalize player
     const player = new Player(socket);
-    users.push(player);
+
+    // add player to room
+    var room = rooms.find(room => !room.isFull());
+    if (typeof room === 'undefined') {
+      room = new Room();
+      room.players.push(player);
+      rooms.push(room);
+      socket.emit('waiting');
+    } else {
+      room.players.push(player);
+      room.startGame();
+    }
 
     socket.on('mousemove', player.handleMouseMove.bind(player));
-    socket.on('shoot', () => {
-      player.shoot(bullets);
-      console.log(bullets.length);
-    });
+    // @ts-ignore
+    socket.on('shoot', () => player.shoot(room.bullets));
     socket.on('keychange', player.handleKeyEvent.bind(player));
     socket.on('disconnect', () => {
-      users.splice(users.indexOf(player), 1);
-    })
+      console.log('disconnect');
+    });
   });
 });
-
-setInterval(() => {
-  const sendData: PlayerData[] = [];
-  const bulletss: BulletData[] = []
-  bullets.forEach(bullet => {
-    bullet.update();
-    bulletss.push(bullet.toJSON());
-  });
-
-  users.forEach(user => {
-    user.update();
-    user.detectCollision(bullets);
-    sendData.push(user.getJSON());
-  })
-
-  io.emit('frame', sendData, bulletss);
-}, 1000/60)
