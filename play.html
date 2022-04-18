@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
     <title>tanks-io</title>
     <style>
       html, body {
@@ -11,10 +13,10 @@
       }
 
       canvas {
-        width: 98vmin;
-        height: 98vmin;
+        width: 100vmin;
+        height: 100vmin;
         margin: 0;
-        border: 1vmin solid black;
+        border-right: 1vmin solid black;
       }
     </style>
     
@@ -22,6 +24,6 @@
   <body>
     <canvas width="700px" height="700px">Sorry, your browser doesn't support html canvas</canvas>
     <noscript>YO MUST ENABLE JAVASCRIPT</noscript>
-    <script type="module" src="./client.ts"></script>
+    <script type="module" src="./client.js"></script>
   </body>
 </html>

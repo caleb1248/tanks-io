@@ -1,17 +1,24 @@
-import Room from './lib/room.js';
-import { Server, Socket } from 'socket.io';
-import { Player } from './lib/player.js';
+const  { Room } = require('./lib/room'),
+  { Server } = require('socket.io'),
+  { Player } = require('./lib/player'),
+  express = require('express'),
+  app = express(),
+  server = app.listen(3000, () => {
+    console.log('listening on http://localhost:3000');
+  }),
 
-const rooms: Room[] = [];
+  rooms = [],
 
-const io = new Server(4000, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST']
-  }
-});
+  io = new Server(server, {
+    cors: {
+      origin: '*',
+      methods: ['GET', 'POST']
+    }
+  });
 
-io.on('connection', (socket: Socket) => {
+app.use(express.static('.'));
+
+io.on('connection', socket => {
   socket.on('joining', () => {
     // initalize player
     const player = new Player(socket);
@@ -29,11 +36,7 @@ io.on('connection', (socket: Socket) => {
     }
 
     socket.on('mousemove', player.handleMouseMove.bind(player));
-    // @ts-ignore
     socket.on('shoot', () => player.shoot(room.bullets));
     socket.on('keychange', player.handleKeyEvent.bind(player));
-    socket.on('disconnect', () => {
-      console.log('disconnect');
-    });
   });
 });

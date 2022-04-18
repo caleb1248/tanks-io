@@ -1,14 +1,10 @@
-import io from 'socket.io-client';
-import PlayerData from '../lib/playerJSON';
-import Bullet from '../lib/bullet';
-
-const socket = io('http://localhost:4000');
+const socket = io();
 const canvas = document.querySelector('canvas'),
   ctx = canvas.getContext('2d');
 
 socket.emit('joining');
 
-function handleMouseMove(e: MouseEvent) {
+function handleMouseMove(e) {
   socket.emit('mousemove', e.x, e.y);
 }
 
@@ -34,7 +30,7 @@ socket.on('startGame', () => {
   window.addEventListener('mousemove', handleMouseMove);
   window.addEventListener('mousedown', handleClick);
 
-  onkeydown = onkeyup = function (e: KeyboardEvent) {
+  onkeydown = onkeyup = function (e) {
     keys[e.key] = e.type == "keydown";
 
     var { ArrowRight, ArrowLeft, ArrowDown, ArrowUp } = keys;
@@ -51,7 +47,7 @@ socket.on('startGame', () => {
     location.href = '/';
   });
 
-  socket.on('frame', (frameData: PlayerData[], bullets: Bullet[]) => {
+  socket.on('frame', (frameData, bullets) => {
     ctx.clearRect(0 ,0, canvas.width, canvas.height);
 
     for(let data of frameData) {
