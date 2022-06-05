@@ -3,7 +3,7 @@ const  { Room } = require('./lib/room'),
   { Player } = require('./lib/player'),
   express = require('express'),
   app = express(),
-  server = app.listen(3000, () => {
+  server = app.listen(process.env.PORT || 3000, () => {
     console.log('listening on http://localhost:3000');
   }),
 
